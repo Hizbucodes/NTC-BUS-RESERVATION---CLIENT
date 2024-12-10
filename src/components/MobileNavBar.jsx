@@ -1,7 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 
-const NavBar = () => {
+const MobileNavBar = () => {
   const [navLinks, setNavLinks] = useState([
     {
       id: 1,
@@ -21,13 +21,13 @@ const NavBar = () => {
   ]);
   return (
     <nav>
-      <ul className="hidden sm:flex items-center gap-x-5">
+      <ul className="flex flex-col gap-y-8">
         {navLinks.map((navLink) => {
           return (
             <li key={navLink.id}>
               <NavLink
                 to={navLink.linkTo}
-                className="font-bold text-black hover:opacity-75 transition-opacity duration-200 ease-out"
+                className="font-semibold text-4xl text-black hover:opacity-65 transition-opacity duration-200 ease-out"
               >
                 {navLink.navTitle}
               </NavLink>
@@ -39,4 +39,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default MobileNavBar;

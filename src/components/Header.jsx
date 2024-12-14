@@ -6,7 +6,7 @@ import MobileNavBar from "./MobileNavBar";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const toggleMenuBar = () => {
     setIsOpen(!isOpen);
@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <Fragment>
-      <div className="relative flex justify-between items-center w-full h-20 lg:px-12 px-2">
+      <div className="relative flex justify-between items-center w-full h-20 lg:px-12 px-2 z-10">
         <Link to={"/"}>
           <img
             className="object-cover w-[9rem] rounded-md"
@@ -59,6 +59,7 @@ const Header = () => {
           right-0 
           w-1/2 
           bg-zinc-50
+          rounded-md
           transform 
           transition-transform 
           duration-300 

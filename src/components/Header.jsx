@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <Fragment>
-      <div className="relative flex justify-between items-center w-full h-20 lg:px-12 px-2 z-10">
+      <div className="relative flex justify-between items-center w-full h-20 lg:px-12 px-2 z-10 shadow-sm">
         <Link to={"/"}>
           <img
             className="object-cover w-[9rem] rounded-md"
@@ -58,8 +58,8 @@ const Header = () => {
           top-20 
           right-0 
           w-1/2 
-          bg-zinc-50
-          rounded-md
+          bg-zinc-100
+          rounded-l-md
           transform 
           transition-transform 
           duration-300 

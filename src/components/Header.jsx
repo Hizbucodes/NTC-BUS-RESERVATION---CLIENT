@@ -27,18 +27,22 @@ const Header = () => {
         <NavBar />
 
         <div className="hidden sm:flex gap-x-5 font-semibold">
-          <button
-            type="button"
-            className="px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
-          >
-            Sign Up
-          </button>
+          <Link to={"/login"}>
+            <button
+              type="button"
+              className="px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
+            >
+              Log in
+            </button>
+          </Link>
+          <Link to={"/register"}>
+            <button
+              type="button"
+              className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+            >
+              Sign Up
+            </button>
+          </Link>
         </div>
 
         <button

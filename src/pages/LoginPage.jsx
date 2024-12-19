@@ -30,8 +30,8 @@ const LoginPage = () => {
             </h2>
           </div>
 
-          <form className="w-full h-full rounded-r-md px-5 text-start gap-y-5 flex flex-col mt-8">
-            <div className=" flex flex-col gap-y-2">
+          <form className="w-full h-full rounded-r-md px-5 text-start gap-y-3 flex flex-col mt-8">
+            <div className=" flex flex-col gap-y-1">
               <label htmlFor="email">Email Address</label>
               <input
                 className="border-2 rounded-md py-1 px-2"
@@ -41,7 +41,7 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className=" flex flex-col gap-y-2">
+            <div className=" flex flex-col gap-y-1">
               <label htmlFor="password">Password</label>
               <input
                 className="border-2 rounded-md py-1 px-2"
@@ -55,7 +55,7 @@ const LoginPage = () => {
               type="button"
               className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity mt-8"
             >
-              Sign in
+              Sign In
             </button>
 
             <p className="text-center">

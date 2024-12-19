@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import TripCard from "../components/TripCard";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import tripAPI from "../api/tripAPI";
+import TripCard from "../components/TripCard";
 
 const TripSchedulePage = () => {
   const [searchParams] = useSearchParams();

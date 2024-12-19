@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const RegisterPage = () => {
   return (
     <section className=" w-full h-full flex pt-6 justify-center pb-6">
-      <div className="bg-white shadow-2xl rounded-md flex sm:justify-between justify-center w-[1024px] min-h-[770px] sm:h-[600px]">
+      <div className="bg-white shadow-2xl rounded-md flex sm:justify-between justify-center w-[1024px] min-h-[850px] sm:h-[600px]">
         <div className="h-[100%] w-1/2 rounded-md hidden sm:flex">
           <img
             className="object-cover h-full w-full rounded-l-md brightness-75"
@@ -48,6 +48,18 @@ const RegisterPage = () => {
                 id="lastName"
                 placeholder="Enter Your Last Name"
               />
+            </div>
+
+            <div className=" flex flex-col gap-y-1">
+              <label htmlFor="role">Select a Role</label>
+              <select id="role" className="border-2 rounded-md py-1 px-2">
+                <option value="" disabled>
+                  Role...
+                </option>
+                <option value="admin">ADMIN</option>
+                <option value="operator">OPERATOR</option>
+                <option value="commuter">COMMUTER</option>
+              </select>
             </div>
 
             <div className=" flex flex-col gap-y-1">

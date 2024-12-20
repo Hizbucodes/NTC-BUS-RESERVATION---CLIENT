@@ -1,5 +1,8 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "http://localhost:3000/api/v1/trips",
+  baseURL: import.meta.env.VITE_BASE_URL_API_TRIPS,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });

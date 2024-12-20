@@ -10,8 +10,17 @@ import NotFound from "./pages/NotFound";
 import TripSchedulePage from "./pages/TripSchedulePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { verifyToken } from "./app/feature/auth/authSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(verifyToken());
+  }, [dispatch]);
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>

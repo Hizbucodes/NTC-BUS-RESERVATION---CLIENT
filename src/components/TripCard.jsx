@@ -14,7 +14,7 @@ const TripCard = ({ trip }) => {
 
         <button
           type="button"
-          className="bg-black text-white rounded-md md:w-40 w-36 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+          className="bg-black text-white rounded-md md:w-40 w-36 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity shadow-lg shadow-black/50"
         >
           Reserve Seat
         </button>

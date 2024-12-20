@@ -1,9 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import login_image from "../assets/login-side-image.jpg";
 import ntc_logo from "../assets/NTC_LOGO.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../app/feature/auth/authSlice";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (data) => {
+    dispatch(loginUser(data)).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        navigate("/");
+      }
+    });
+  };
+
+  useEffect(() => {
+    reset();
+  }, [isSubmitSuccessful]);
+
   return (
     <section className=" w-full h-full flex pt-6 justify-center">
       <div className="bg-white shadow-2xl rounded-md flex sm:justify-between justify-center w-[1024px] h-screen sm:h-[600px]">
@@ -29,16 +60,25 @@ const LoginPage = () => {
               <span className="sm:text-4xl">&#128075;</span>
             </h2>
           </div>
-
-          <form className="w-full h-full rounded-r-md px-5 text-start gap-y-3 flex flex-col mt-8">
+          {error && <p className="text-red-500">{error}</p>}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full h-full rounded-r-md px-5 text-start gap-y-3 flex flex-col mt-8"
+          >
             <div className=" flex flex-col gap-y-1">
               <label htmlFor="email">Email Address</label>
               <input
                 className="border-2 rounded-md py-1 px-2"
                 type="email"
                 id="email"
+                {...register("email", { required: "Email is required" })}
                 placeholder="Enter Your Email Address"
               />
+              {errors.email && (
+                <p className="text-red-500 font-semibold">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div className=" flex flex-col gap-y-1">
@@ -47,15 +87,21 @@ const LoginPage = () => {
                 className="border-2 rounded-md py-1 px-2"
                 type="password"
                 id="password"
+                {...register("password", { required: "Password is required" })}
                 placeholder="Enter Your Valid Password"
               />
+              {errors.password && (
+                <p className="text-red-500 font-semibold">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
-              type="button"
+              type="submit"
               className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity mt-8"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <p className="text-center">

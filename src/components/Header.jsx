@@ -4,12 +4,21 @@ import NavBar from "./NavBar";
 import { Fragment, useState } from "react";
 import MobileNavBar from "./MobileNavBar";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../app/feature/auth/authSlice";
+import { IoLogOutOutline } from "react-icons/io5";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const { token, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const toggleMenuBar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -26,19 +35,40 @@ const Header = () => {
 
         <NavBar />
 
-        <div className="hidden sm:flex gap-x-5 font-semibold">
-          <button
-            type="button"
-            className="px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
-          >
-            Sign Up
-          </button>
+        <div className="hidden sm:flex gap-x-5 font-semibold items-center">
+          {token && user ? (
+            <>
+              <p className="font-normal">
+                Welcome, <span className="font-medium">{user?.firstName}!</span>
+              </p>
+              <button
+                onClick={handleLogout}
+                className="bg-black text-white rounded-md w-[7rem] px-2 py-2 pr-3 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity flex justify-between items-center group"
+              >
+                <span>Logout</span>
+                <IoLogOutOutline className="group-hover:translate-x-2 duration-200 ease-linear text-xl group-hover:animate-pulse" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to={"/login"}>
+                <button
+                  type="button"
+                  className="px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
+                >
+                  Log in
+                </button>
+              </Link>
+              <Link to={"/register"}>
+                <button
+                  type="button"
+                  className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+                >
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -76,18 +106,35 @@ const Header = () => {
         <MobileNavBar />
 
         <div className="flex flex-col gap-y-5 font-semibold">
-          <button
-            type="button"
-            className=" px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
-          >
-            Sign Up
-          </button>
+          {token && user ? (
+            <>
+              <p className="font-normal">
+                Welcome, <span className="font-medium">{user?.firstName}!</span>
+              </p>
+              <button
+                onClick={handleLogout}
+                className="bg-black text-white rounded-md w-[7rem] px-2 py-2 pr-3 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity flex justify-between items-center group mx-auto"
+              >
+                <span>Logout</span>
+                <IoLogOutOutline className="group-hover:translate-x-2 duration-200 ease-linear text-xl group-hover:animate-pulse" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className=" px-8 py-2 border-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity rounded-md"
+              >
+                Log in
+              </button>
+              <button
+                type="button"
+                className="bg-black text-white rounded-md px-8 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </div>
     </Fragment>

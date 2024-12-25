@@ -5,20 +5,51 @@ import { Fragment, useState } from "react";
 import MobileNavBar from "./MobileNavBar";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../app/feature/auth/authSlice";
+import { deleteAccount, logout } from "../app/feature/auth/authSlice";
 import { IoLogOutOutline } from "react-icons/io5";
+import { FaArrowDown } from "react-icons/fa";
+import { FaArrowUp } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const { token, user } = useSelector((state) => state.auth);
+  const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
+  const { token, user, loading, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const toggleMenuBar = () => {
     setIsOpen(!isOpen);
   };
 
+  const toggleUserProfile = () => {
+    setIsUserProfileOpen(!isUserProfileOpen);
+  };
+
   const handleLogout = () => {
     dispatch(logout());
+  };
+
+  const handleDeleteAccount = async () => {
+    if (
+      window.confirm(
+        "Warning: This action cannot be undone. All your data will be permanently deleted. Are you sure you want to delete your account?"
+      )
+    ) {
+      try {
+        const resultAction = await dispatch(deleteAccount());
+        if (deleteAccount.fulfilled.match(resultAction)) {
+          alert("Your account has been successfully deleted.");
+        } else if (deleteAccount.rejected.match(resultAction)) {
+          alert(
+            resultAction.payload ||
+              "Failed to delete account. Please try again."
+          );
+        }
+      } catch (err) {
+        console.error("Failed to delete account:", err);
+        alert("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   return (
@@ -38,9 +69,41 @@ const Header = () => {
         <div className="hidden sm:flex gap-x-5 font-semibold items-center">
           {token && user ? (
             <>
-              <p className="font-normal">
-                Welcome, <span className="font-medium">{user?.firstName}!</span>
-              </p>
+              <button
+                type="button"
+                onClick={toggleUserProfile}
+                className="flex relative cursor-pointer bg-zinc-300 items-center justify-between w-[6rem] rounded-full px-3 py-2"
+              >
+                <span>
+                  <FaUserAlt className="text-2xl" />
+                </span>
+
+                {isUserProfileOpen ? (
+                  <span>
+                    <FaArrowUp className="text-xl animate-bounce duration-200 ease-in" />
+                  </span>
+                ) : (
+                  <FaArrowDown className="text-xl animate-bounce duration-200 ease-in" />
+                )}
+              </button>
+              {isUserProfileOpen && (
+                <div className="bg-black/50 text-white shadow-2xl shadow-black backdrop:blur-xl absolute w-[10rem] top-16 right-48 rounded-md min-h-[5rem] pb-2 z-50 text-center px-2">
+                  <p className="font-normal text-md pt-2">
+                    {" "}
+                    Hello,{" "}
+                    <span className="font-bold capitalize">
+                      {user?.firstName}!
+                    </span>
+                  </p>
+                  <button
+                    onClick={handleDeleteAccount}
+                    type="button"
+                    className="bg-red-700 px-2 rounded-md mt-5 py-1 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+                  >
+                    Delete account
+                  </button>
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 className="bg-black text-white rounded-md w-[7rem] px-2 py-2 pr-3 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity flex justify-between items-center group"
@@ -108,9 +171,41 @@ const Header = () => {
         <div className="flex flex-col gap-y-5 font-semibold">
           {token && user ? (
             <>
-              <p className="font-normal">
-                Welcome, <span className="font-medium">{user?.firstName}!</span>
-              </p>
+              <button
+                type="button"
+                onClick={toggleUserProfile}
+                className="flex relative cursor-pointer bg-zinc-300 items-center justify-between w-[7rem] rounded-full px-3 py-2"
+              >
+                <span>
+                  <FaUserAlt className="text-2xl" />
+                </span>
+
+                {isUserProfileOpen ? (
+                  <span>
+                    <FaArrowUp className="text-xl animate-bounce duration-200 ease-in" />
+                  </span>
+                ) : (
+                  <FaArrowDown className="text-xl animate-bounce duration-200 ease-in" />
+                )}
+              </button>
+              {isUserProfileOpen && (
+                <div className="bg-black/80 text-white shadow-2xl shadow-black backdrop:blur-xl absolute w-[10rem] right-20 bottom-20 rounded-md min-h-[5rem] pb-2 z-50 text-center px-2">
+                  <p className="font-normal text-md pt-2">
+                    {" "}
+                    Hello,{" "}
+                    <span className="font-bold capitalize">
+                      {user?.firstName}!
+                    </span>
+                  </p>
+                  <button
+                    onClick={handleDeleteAccount}
+                    type="button"
+                    className="bg-red-700 px-2 rounded-md mt-5 py-1 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity"
+                  >
+                    Delete account
+                  </button>
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 className="bg-black text-white rounded-md w-[7rem] px-2 py-2 pr-3 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity flex justify-between items-center group mx-auto"

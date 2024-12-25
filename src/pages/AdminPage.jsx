@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { FaBars, FaTimes, FaBus } from "react-icons/fa";
 import { MdCreateNewFolder } from "react-icons/md";
 import { TbRoute } from "react-icons/tb";
 import { useSelector } from "react-redux";
+import BusRouteForm from "../components/BusRouteForm";
+import BusForm from "../components/BusForm";
 
 const AdminPage = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state) => state.auth);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeContent, setActiveContent] = useState("createTrip");
@@ -37,7 +40,7 @@ const AdminPage = () => {
       case "createTrip":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Create Trip</h2>
+            <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
             <p>Trip</p>
           </div>
         );
@@ -45,14 +48,14 @@ const AdminPage = () => {
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Bus</h2>
-            <p>Bus</p>
+            <BusForm />
           </div>
         );
       case "createBusRoute":
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Bus Route</h2>
-            <p>Bus route</p>
+            <BusRouteForm />
           </div>
         );
       default:
@@ -61,11 +64,11 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100">
       <div
         className={`
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          fixed left-0 top-0 h-full w-64 bg-gray-800 text-white transition-transform duration-300 ease-in-out
+          fixed left-0 top-0 min-h-full w-64 bg-gray-800 text-white transition-transform duration-300 ease-in-out
           lg:relative lg:translate-x-0 z-20
         `}
       >

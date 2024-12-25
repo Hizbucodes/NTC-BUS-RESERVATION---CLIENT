@@ -13,6 +13,8 @@ import RegisterPage from "./pages/RegisterPage";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { verifyToken } from "./app/feature/auth/authSlice";
+import BusPage from "./pages/BusPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -28,6 +30,14 @@ function App() {
         <Route path="trips" element={<TripSchedulePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route
+          path="/buses"
+          element={
+            <ProtectedRoute>
+              <BusPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
     )

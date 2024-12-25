@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ childern }) => {
+const ProtectedRoute = ({ children, requiredRole }) => {
   const { token, user } = useSelector((state) => state.auth);
 
   if (!token) {
@@ -13,7 +13,7 @@ const ProtectedRoute = ({ childern }) => {
     return <Navigate to="/" replace />;
   }
 
-  return childern;
+  return children;
 };
 
 export default ProtectedRoute;

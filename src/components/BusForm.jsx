@@ -4,12 +4,14 @@ import { useSelector } from "react-redux";
 import routeApi from "../api/routeApi";
 import { IoMdAdd } from "react-icons/io";
 import { PiTrashLight } from "react-icons/pi";
+import authApi from "../api/authApi";
 
 const BusForm = () => {
   const { loading, token } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [routes, setRoutes] = useState([]);
+  const [operators, setOperators] = useState([]);
   const {
     register,
     control,
@@ -43,16 +45,24 @@ const BusForm = () => {
   }, [isSubmitSuccessful]);
 
   useEffect(() => {
-    const fetchRoutes = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await routeApi.get("/getAllRoutes", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const [routesResponse, operatorsResponse] = await Promise.all([
+          routeApi.get("/getAllRoutes", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          authApi.get("/operators", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
 
-        setRoutes(response.data.data);
+        setRoutes(routesResponse.data.data);
+        setOperators(operatorsResponse.data.operators);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -61,7 +71,7 @@ const BusForm = () => {
     };
 
     if (token) {
-      fetchRoutes();
+      fetchData();
     }
   }, [token]);
 
@@ -70,19 +80,30 @@ const BusForm = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="w-full h-full rounded-r-md px-5 text-start gap-y-5 flex flex-col mt-8"
     >
+      {isLoading && <p>Loading data...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
       <div className=" flex flex-col gap-y-1">
         <label htmlFor="operatorName">
           <span className="text-red-500 font-bold mr-1">*</span>Operator Name
         </label>
-        <input
-          className="border-2 rounded-md py-1 px-2"
-          type="text"
-          id="operatorName"
-          {...register("operatorName", {
-            required: "Operator Name is required",
-          })}
-          placeholder="Insert Operator Name"
-        />
+        {!isLoading && !error && (
+          <select
+            {...register("operatorName", {
+              required: "Operator Name is required",
+            })}
+            id="operatorName"
+            className="border-2 rounded-md py-1 px-2"
+          >
+            <option value="" disabled>
+              Select a Operator...
+            </option>
+            {operators.map((operator) => (
+              <option key={operator.id}>
+                {operator.firstName} {operator.lastName}
+              </option>
+            ))}
+          </select>
+        )}
         {errors.operatorName && (
           <p className="text-red-500 font-semibold">
             {errors.operatorName.message}

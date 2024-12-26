@@ -6,6 +6,7 @@ import { TbRoute } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import BusRouteForm from "../components/BusRouteForm";
 import BusForm from "../components/BusForm";
+import TripForm from "../components/TripForm";
 
 const AdminPage = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -41,7 +42,7 @@ const AdminPage = () => {
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
-            <p>Trip</p>
+            <TripForm />
           </div>
         );
       case "createBus":

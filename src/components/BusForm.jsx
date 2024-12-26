@@ -1,9 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import routeApi from "../api/routeApi";
+import { IoMdAdd } from "react-icons/io";
+import { PiTrashLight } from "react-icons/pi";
 
 const BusForm = () => {
-  const { loading } = useSelector((state) => state.auth);
+  const { loading, token } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [routes, setRoutes] = useState([]);
   const {
     register,
     control,
@@ -13,7 +19,7 @@ const BusForm = () => {
   } = useForm({
     defaultValues: {
       operatorName: "",
-      capacity: 0,
+      capacity: null,
       busType: "",
       amenities: [],
       licensePlate: "",
@@ -27,19 +33,47 @@ const BusForm = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(console.log(data));
+    data.capacity = parseInt(data.capacity, 10);
+    data.routeId = parseInt(data.routeId, 10);
+
+    console.log(data);
   };
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);
 
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        setIsLoading(true);
+        const response = await routeApi.get("/getAllRoutes", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setRoutes(response.data.data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchRoutes();
+    }
+  }, [token]);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full rounded-r-md px-5 text-start gap-y-3 flex flex-col mt-8"
+      className="w-full h-full rounded-r-md px-5 text-start gap-y-5 flex flex-col mt-8"
     >
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="operatorName">Operator Name</label>
+        <label htmlFor="operatorName">
+          <span className="text-red-500 font-bold mr-1">*</span>Operator Name
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
           type="text"
@@ -57,7 +91,10 @@ const BusForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="capacity">Bus Seat Capacity</label>
+        <label htmlFor="capacity">
+          <span className="text-red-500 font-bold mr-1">*</span>Bus Seat
+          Capacity
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
           type="number"
@@ -76,7 +113,9 @@ const BusForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="busType">Bus Type</label>
+        <label htmlFor="busType">
+          <span className="text-red-500 font-bold mr-1">*</span>Bus Type
+        </label>
         <select
           {...register("busType", { required: "Bus Type is required" })}
           id="busType"
@@ -94,13 +133,13 @@ const BusForm = () => {
         )}
       </div>
 
-      <div className=" flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-1">
         <label htmlFor="busAmenities">Bus Amenities (Optional)</label>
         {fields.map((amenity, index) => (
-          <div key={amenity.id}>
+          <div key={amenity.id} className="flex items-center">
             <input
-              id="busAmenities"
-              className="border-2 rounded-md py-1 px-2 "
+              id={`busAmenities-${index}`}
+              className="border-2 rounded-md py-1 px-2"
               {...register(`amenities.${index}.name`)}
               placeholder="Amenity Name"
             />
@@ -109,25 +148,32 @@ const BusForm = () => {
                 {errors.amenities[index].name.message}
               </p>
             )}
-
             {fields.length > 1 && (
-              <button type="button" onClick={() => remove(index)}>
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className=" ml-2 flex items-center gap-x-2"
+              >
                 Remove Amenity
+                <PiTrashLight className="text-xl" />
               </button>
             )}
           </div>
         ))}
         <button
-          className="border-2 font-semibold rounded-md py-1 px-2 bg-white"
+          className="border-2 font-semibold rounded-md py-1 px-2 bg-white flex items-center justify-center gap-x-2"
           type="button"
           onClick={() => append({ name: "" })}
         >
           Add Amenity
+          <IoMdAdd className="text-xl" />
         </button>
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="licensePlate">License Plate</label>
+        <label htmlFor="licensePlate">
+          <span className="text-red-500 font-bold mr-1">*</span>License Plate
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
           type="text"
@@ -145,19 +191,27 @@ const BusForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="busRoute">Select Bus Route</label>
-        <select
-          {...register("routeId", { required: "Bus Route is required" })}
-          id="busRoute"
-          className="border-2 rounded-md py-1 px-2"
-        >
-          <option value="" disabled>
-            Bus Route...
-          </option>
-          <option value="kandy">Kandy</option>
-          <option value="colombo">Colombo</option>
-          <option value="matale">Matale</option>
-        </select>
+        {isLoading && <p>Loading routes...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
+        <label htmlFor="busRoute">
+          <span className="text-red-500 font-bold mr-1">*</span>Select Bus Route
+        </label>
+        {!isLoading && !error && (
+          <select
+            {...register("routeId", { required: "Bus Route is required" })}
+            id="busRoute"
+            className="border-2 rounded-md py-1 px-2"
+          >
+            <option value="" disabled>
+              Bus Route...
+            </option>
+            {routes.map((route) => (
+              <option key={route.id} value={route.id}>
+                {route.origin} - {route.destination}
+              </option>
+            ))}
+          </select>
+        )}
         {errors.routeId && (
           <p className="text-red-500 font-semibold">{errors.routeId.message}</p>
         )}

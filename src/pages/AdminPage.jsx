@@ -12,7 +12,7 @@ const AdminPage = () => {
   const { user, loading } = useSelector((state) => state.auth);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeContent, setActiveContent] = useState("createTrip");
+  const [activeContent, setActiveContent] = useState("createBusRoute");
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -20,29 +20,30 @@ const AdminPage = () => {
 
   const navItems = [
     {
-      id: "createTrip",
-      label: "Create Trip",
-      icon: <MdCreateNewFolder className="w-5 h-5" />,
+      id: "createBusRoute",
+      label: "Create Bus Route",
+      icon: <TbRoute className="w-5 h-5" />,
     },
     {
       id: "createBus",
       label: "Create Bus",
       icon: <FaBus className="w-5 h-5" />,
     },
+
     {
-      id: "createBusRoute",
-      label: "Create Bus Route",
-      icon: <TbRoute className="w-5 h-5" />,
+      id: "createTrip",
+      label: "Create Trip",
+      icon: <MdCreateNewFolder className="w-5 h-5" />,
     },
   ];
 
   const renderContent = () => {
     switch (activeContent) {
-      case "createTrip":
+      case "createBusRoute":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
-            <TripForm />
+            <h2 className="text-2xl font-bold mb-4">Create Bus Route</h2>
+            <BusRouteForm />
           </div>
         );
       case "createBus":
@@ -52,13 +53,14 @@ const AdminPage = () => {
             <BusForm />
           </div>
         );
-      case "createBusRoute":
+      case "createTrip":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Create Bus Route</h2>
-            <BusRouteForm />
+            <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
+            <TripForm />
           </div>
         );
+
       default:
         return null;
     }

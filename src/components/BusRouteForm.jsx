@@ -19,18 +19,27 @@ const BusRouteForm = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(console.log(data));
+    const formattedData = {
+      ...data,
+      distance: parseInt(data.distance, 10),
+      duration: parseInt(data.duration, 10),
+    };
+
+    console.log(formattedData); // Log the formatted data
   };
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full rounded-r-md px-5 text-start gap-y-3 flex flex-col mt-8"
+      className="w-full h-full rounded-r-md px-5 text-start gap-y-5 flex flex-col mt-8"
     >
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="origin">Origin</label>
+        <label htmlFor="origin">
+          <span className="text-red-500 font-bold mr-1">*</span>Origin
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
           type="text"
@@ -44,7 +53,9 @@ const BusRouteForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="destination">Destination</label>
+        <label htmlFor="destination">
+          <span className="text-red-500 font-bold mr-1">*</span>Destination
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
           type="text"
@@ -62,10 +73,12 @@ const BusRouteForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="distance">Distance (Km)</label>
+        <label htmlFor="distance">
+          <span className="text-red-500 font-bold mr-1">*</span>Distance (Km)
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
-          type="text"
+          type="number"
           id="distance"
           {...register("distance", {
             required: "Distance is required",
@@ -80,10 +93,12 @@ const BusRouteForm = () => {
       </div>
 
       <div className=" flex flex-col gap-y-1">
-        <label htmlFor="duration">Duration (Hrs)</label>
+        <label htmlFor="duration">
+          <span className="text-red-500 font-bold mr-1">*</span>Duration (Hrs)
+        </label>
         <input
           className="border-2 rounded-md py-1 px-2"
-          type="text"
+          type="number"
           id="duration"
           {...register("duration", {
             required: "Duration is required",

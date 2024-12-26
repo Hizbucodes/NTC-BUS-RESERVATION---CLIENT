@@ -1,14 +1,23 @@
 import { format } from "date-fns";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import busApi from "../api/busApi";
+import routeApi from "../api/routeApi";
 
 const TripForm = () => {
-  const { loading } = useSelector((state) => state.auth);
+  const { loading, token } = useSelector((state) => state.auth);
+  const [buses, setBuses] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [filteredRoutes, setFilteredRoutes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitSuccessful },
   } = useForm({
     defaultValues: {
@@ -21,40 +30,103 @@ const TripForm = () => {
     },
   });
 
+  const selectedBusId = watch("busId");
+
   const onSubmit = (data) => {
-    console.log(console.log(data));
+    const formattedData = {
+      ...data,
+      busId: parseInt(data.busId, 10),
+      routeId: parseInt(data.routeId, 10),
+    };
+    console.log("Formatted Data for submission:", formattedData);
   };
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [busesResponse, routesResponse] = await Promise.all([
+          busApi.get("/getAllBuses", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          routeApi.get("/getAllRoutes", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        setBuses(busesResponse.data.data);
+        setRoutes(routesResponse.data.data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (token) fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    if (selectedBusId) {
+      const selectedBus = buses.find(
+        (bus) => bus.id === parseInt(selectedBusId)
+      );
+      if (selectedBus) {
+        const filtered = routes.filter(
+          (route) => route.id === selectedBus.routeId
+        );
+
+        if (filtered.length > 0) {
+          setFilteredRoutes(filtered);
+
+          if (watch("routeId") !== filtered[0]?.id) {
+            reset({ routeId: filtered[0]?.id || 0 });
+          }
+        }
+      } else {
+        setFilteredRoutes([]);
+      }
+    } else {
+      setFilteredRoutes([]);
+    }
+  }, [selectedBusId, buses, routes, reset, watch]);
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full h-full rounded-r-md px-5 text-start gap-y-5 flex flex-col mt-8"
     >
-      <div className=" flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-1">
+        {isLoading && <p>Loading buses...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
         <label htmlFor="operatorName">
           <span className="text-red-500 font-bold mr-1">*</span>Select a Bus
         </label>
-        <select
-          {...register("busId", { required: "Bus is required" })}
-          id="operatorName"
-          className="border-2 rounded-md py-1 px-2"
-        >
-          <option value="" disabled>
-            Bus...
-          </option>
-          <option value="Normal">Normal</option>
-          <option value="Semi-Luxury">Semi - Luxury</option>
-          <option value="Luxury">Luxury</option>
-        </select>
+        {!isLoading && !error && (
+          <select
+            {...register("busId", { required: "Bus is required" })}
+            id="operatorName"
+            className="border-2 rounded-md py-1 px-2"
+          >
+            <option disabled value="">
+              Bus...
+            </option>
+            {buses.map((bus) => (
+              <option key={bus.id} value={bus.id}>
+                {bus.operatorName}
+              </option>
+            ))}
+          </select>
+        )}
         {errors.busId && (
           <p className="text-red-500 font-semibold">{errors.busId.message}</p>
         )}
       </div>
 
-      <div className=" flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-1">
         <label htmlFor="route">
           <span className="text-red-500 font-bold mr-1">*</span>Select a Route
         </label>
@@ -66,9 +138,11 @@ const TripForm = () => {
           <option value="" disabled>
             Route...
           </option>
-          <option value="Colombo">Colomo</option>
-          <option value="Kandy">Kandy</option>
-          <option value="Matale">Matale</option>
+          {filteredRoutes.map((route) => (
+            <option key={route.id} value={route.id}>
+              {route.origin} - {route.destination}
+            </option>
+          ))}
         </select>
         {errors.routeId && (
           <p className="text-red-500 font-semibold">{errors.routeId.message}</p>

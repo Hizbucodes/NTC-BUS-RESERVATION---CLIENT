@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import routeApi from "../api/routeApi";
 
 const BusRouteForm = () => {
-  const { loading } = useSelector((state) => state.auth);
+  const { loading, token } = useSelector((state) => state.auth);
   const {
     register,
     handleSubmit,
@@ -18,15 +19,35 @@ const BusRouteForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const formattedData = {
       ...data,
       distance: parseInt(data.distance, 10),
       duration: parseInt(data.duration, 10),
     };
 
-    console.log(formattedData); // Log the formatted data
+    console.log(formattedData);
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+    try {
+      await routeApi.post("/", formattedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error:",
+          error.response.data.message || error.response.data
+        );
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
+
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);

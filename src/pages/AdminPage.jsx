@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { FaBars, FaTimes, FaBus } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaBars, FaBus, FaRoute, FaTimes } from "react-icons/fa";
 import { MdCreateNewFolder } from "react-icons/md";
-import { TbRoute } from "react-icons/tb";
 import { useSelector } from "react-redux";
-import BusRouteForm from "../components/BusRouteForm";
 import BusForm from "../components/BusForm";
+import BusRouteForm from "../components/BusRouteForm";
 import TripForm from "../components/TripForm";
 
 const AdminPage = () => {
@@ -22,7 +20,7 @@ const AdminPage = () => {
     {
       id: "createBusRoute",
       label: "Create Bus Route",
-      icon: <TbRoute className="w-5 h-5" />,
+      icon: <FaRoute className="w-5 h-5" />,
     },
     {
       id: "createBus",
@@ -32,7 +30,7 @@ const AdminPage = () => {
 
     {
       id: "createTrip",
-      label: "Create Trip",
+      label: "Create Trip Schedule",
       icon: <MdCreateNewFolder className="w-5 h-5" />,
     },
   ];

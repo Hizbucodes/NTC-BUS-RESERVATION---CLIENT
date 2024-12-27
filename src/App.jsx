@@ -1,6 +1,7 @@
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
   RouterProvider,
 } from "react-router-dom";
@@ -11,12 +12,14 @@ import TripSchedulePage from "./pages/TripSchedulePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { verifyToken } from "./app/feature/auth/authSlice";
 import BusPage from "./pages/BusPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,7 +29,12 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
-        <Route index element={<Home />} />
+        <Route
+          index
+          element={
+            user?.role === "admin" ? <Navigate to="/admin" replace /> : <Home />
+          }
+        />
         <Route path="trips" element={<TripSchedulePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
@@ -35,6 +43,14 @@ function App() {
           element={
             <ProtectedRoute>
               <BusPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminPage />
             </ProtectedRoute>
           }
         />

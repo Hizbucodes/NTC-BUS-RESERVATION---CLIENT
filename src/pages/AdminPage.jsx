@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { FaBars, FaBus, FaRoute, FaTimes } from "react-icons/fa";
 import { MdCreateNewFolder } from "react-icons/md";
+import { TbReservedLine } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import BusForm from "../components/BusForm";
 import BusRouteForm from "../components/BusRouteForm";
 import TripForm from "../components/TripForm";
+import ViewAllBooking from "../components/ViewAllBooking";
 
 const AdminPage = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -33,6 +35,11 @@ const AdminPage = () => {
       label: "Create Trip Schedule",
       icon: <MdCreateNewFolder className="w-5 h-5" />,
     },
+    {
+      id: "viewAllBooking",
+      label: "View All Booking",
+      icon: <TbReservedLine className="w-5 h-5" />,
+    },
   ];
 
   const renderContent = () => {
@@ -56,6 +63,13 @@ const AdminPage = () => {
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
             <TripForm />
+          </div>
+        );
+      case "viewAllBooking":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">All Booking</h2>
+            <ViewAllBooking />
           </div>
         );
 

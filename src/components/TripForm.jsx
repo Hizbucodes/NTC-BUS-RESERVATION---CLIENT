@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import busApi from "../api/busApi";
 import routeApi from "../api/routeApi";
+import tripAPI from "../api/tripAPI";
 
 const TripForm = () => {
   const { loading, token } = useSelector((state) => state.auth);
@@ -32,13 +33,32 @@ const TripForm = () => {
 
   const selectedBusId = watch("busId");
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const formattedData = {
       ...data,
       busId: parseInt(data.busId, 10),
       routeId: parseInt(data.routeId, 10),
     };
-    console.log("Formatted Data for submission:", formattedData);
+
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+    try {
+      await tripAPI.post("/", formattedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error:",
+          error.response.data.message || error.response.data
+        );
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
   useEffect(() => {
     reset();

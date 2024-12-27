@@ -5,6 +5,7 @@ import routeApi from "../api/routeApi";
 import { IoMdAdd } from "react-icons/io";
 import { PiTrashLight } from "react-icons/pi";
 import authApi from "../api/authApi";
+import busApi from "../api/busApi";
 
 const BusForm = () => {
   const { loading, token } = useSelector((state) => state.auth);
@@ -34,11 +35,33 @@ const BusForm = () => {
     name: "amenities",
   });
 
-  const onSubmit = (data) => {
-    data.capacity = parseInt(data.capacity, 10);
-    data.routeId = parseInt(data.routeId, 10);
+  const onSubmit = async (data) => {
+    const formattedData = {
+      ...data,
+      capacity: parseInt(data.capacity, 10),
+      routeId: parseInt(data.routeId, 10),
+    };
 
-    console.log(data);
+    console.log(formattedData);
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+    try {
+      await busApi.post("/", formattedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error:",
+          error.response.data.message || error.response.data
+        );
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
   };
   useEffect(() => {
     reset();

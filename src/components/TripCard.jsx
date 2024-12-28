@@ -1,6 +1,16 @@
 import { BsArrowRight } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const TripCard = ({ trip }) => {
+  const navigate = useNavigate();
+
+  const handleReserveSeat = () => {
+    navigate(`/seat-layout/${trip.Bus.id}`, {
+      state: {
+        tripId: trip.id,
+      },
+    });
+  };
   return (
     <li
       key={trip.id}
@@ -15,6 +25,7 @@ const TripCard = ({ trip }) => {
         <button
           type="button"
           className="bg-black text-white rounded-md md:w-40 w-36 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity shadow-lg shadow-black/50"
+          onClick={handleReserveSeat}
         >
           Reserve Seat
         </button>

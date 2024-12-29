@@ -37,7 +37,6 @@ const Form = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex lg:flex-row flex-col items-start lg:items-center justify-between py-5 gap-y-8"
     >
-      {/*Origin*/}
       <div className="flex flex-col items-start justify-center gap-y-2 w-full lg:w-60">
         <label htmlFor="from" className="flex items-center">
           <GiBus className="mr-2 text-xl" />
@@ -59,7 +58,6 @@ const Form = () => {
         )}
       </div>
 
-      {/*Destination*/}
       <div className="flex flex-col items-start justify-center gap-y-2 w-full lg:w-60">
         <label htmlFor="to" className="flex items-center">
           <GiBus className="mr-2 text-xl" />
@@ -83,7 +81,6 @@ const Form = () => {
         )}
       </div>
 
-      {/*Date*/}
       <div className="flex flex-col items-start justify-center gap-y-2 w-full lg:w-60">
         <label htmlFor="tripDate" className="flex items-center">
           <CiCalendarDate className="mr-2 text-xl" />

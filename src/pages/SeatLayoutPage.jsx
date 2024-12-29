@@ -53,6 +53,7 @@ const SeatLayoutPage = () => {
       if (reserveSeats.fulfilled.match(resultAction)) {
         navigate("/booking/details", {
           state: {
+            busId,
             tripId,
             seatIds: selectedSeats,
             totalFare: resultAction.payload.totalFare,
@@ -157,7 +158,7 @@ const SeatLayoutPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mb-8 place-items-center">
           {seats.map((seat) => (
             <Seat key={seat.id} seat={seat} />
           ))}
@@ -168,9 +169,7 @@ const SeatLayoutPage = () => {
             <p className="text-gray-600">
               Selected Seats: {selectedSeats.length}
             </p>
-            <p className="text-gray-600">
-              Total Fare: Rs. {totalFare.toFixed(2)}
-            </p>
+
             {reservationExpiry && (
               <p className="text-yellow-600">
                 Expires at: {new Date(reservationExpiry).toLocaleTimeString()}

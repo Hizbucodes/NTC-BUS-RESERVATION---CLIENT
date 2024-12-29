@@ -151,8 +151,12 @@ const ViewAllBooking = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-sm text-gray-900 font-medium">
-                        {new Date(booking.bookingDate).toLocaleString()}
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-900 text-start">
+                            {new Date(booking.bookingDate).toLocaleDateString()}
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   ))

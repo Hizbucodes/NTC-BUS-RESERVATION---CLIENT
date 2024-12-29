@@ -11,6 +11,7 @@ const TripCard = ({ trip }) => {
       },
     });
   };
+
   return (
     <li
       key={trip.id}
@@ -58,6 +59,25 @@ const TripCard = ({ trip }) => {
           Duration:{" "}
           <span className="font-semibold">{trip.Route.duration} hours</span>
         </p>
+        <p>
+          Bus Type: <span className="font-semibold">{trip.Bus.busType}</span>
+        </p>
+
+        <ul className="">
+          Bus Amenities:
+          {trip.Bus.amenities.length > 0 ? (
+            trip.Bus.amenities.map((amenity, index) => (
+              <li
+                key={index}
+                className="bg-black/80 shadow-2xl text-white rounded-full px-1.5 py-0.1 inline-block m-1 text-[0.8rem] font-semibold "
+              >
+                {amenity}
+              </li>
+            ))
+          ) : (
+            <li>No amenities available</li>
+          )}
+        </ul>
       </div>
     </li>
   );

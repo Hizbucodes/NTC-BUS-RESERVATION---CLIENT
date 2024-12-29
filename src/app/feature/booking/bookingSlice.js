@@ -14,7 +14,10 @@ export const fetchSeats = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data.data;
+      const sortedSeats = response.data.data.sort(
+        (a, b) => a.seatNumber - b.seatNumber
+      );
+      return sortedSeats;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -45,6 +48,73 @@ export const reserveSeats = createAsyncThunk(
   }
 );
 
+export const completeBooking = createAsyncThunk(
+  "booking/completeBooking",
+  async (bookingDetails, { rejectWithValue }) => {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await bookingApi.post("/complete", bookingDetails, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Booking Slice: ", response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to complete booking"
+      );
+    }
+  }
+);
+
+export const cancelBooking = createAsyncThunk(
+  "booking/cancelBooking",
+  async (bookingId, { rejectWithValue }) => {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await bookingApi.patch(
+        `/cancelBooking/${bookingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
+export const resetSeatStatus = createAsyncThunk(
+  "seats/resetSeatStatus",
+  async (seatIds, { rejectWithValue }) => {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await bookingApi.post(
+        "/reset",
+        { seatIds },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to reset seat status"
+      );
+    }
+  }
+);
+
 const bookingSlice = createSlice({
   name: "booking",
   initialState: {
@@ -55,6 +125,8 @@ const bookingSlice = createSlice({
     totalFare: 0,
     reservationDetails: null,
     reservationExpiry: null,
+    successMessage: null,
+    resetStatus: null,
   },
   reducers: {
     toggleSeatSelection: (state, action) => {
@@ -72,6 +144,11 @@ const bookingSlice = createSlice({
       state.totalFare = 0;
       state.reservationDetails = null;
       state.reservationExpiry = null;
+    },
+    clearBookingState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.success = null;
     },
     setError: (state, action) => {
       state.error = action.payload;
@@ -109,10 +186,59 @@ const bookingSlice = createSlice({
       .addCase(reserveSeats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(resetSeatStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetSeatStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.resetStatus = action.payload.status;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(resetSeatStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(completeBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(completeBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+      })
+      .addCase(completeBooking.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(cancelBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = null;
+      })
+      .addCase(cancelBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message;
+        state.error = null;
+      })
+      .addCase(cancelBooking.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = null;
       });
   },
 });
 
-export const { toggleSeatSelection, clearSelection, setError, clearError } =
-  bookingSlice.actions;
+export const {
+  toggleSeatSelection,
+  clearSelection,
+  setError,
+  clearError,
+  clearBookingState,
+} = bookingSlice.actions;
 export default bookingSlice.reducer;

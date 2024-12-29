@@ -6,6 +6,7 @@ import { IoMdAdd } from "react-icons/io";
 import { PiTrashLight } from "react-icons/pi";
 import authApi from "../api/authApi";
 import busApi from "../api/busApi";
+import seatApi from "../api/seatApi";
 
 const BusForm = () => {
   const { loading, token } = useSelector((state) => state.auth);
@@ -13,6 +14,13 @@ const BusForm = () => {
   const [error, setError] = useState(null);
   const [routes, setRoutes] = useState([]);
   const [operators, setOperators] = useState([]);
+
+  const [submitStatus, setSubmitStatus] = useState({
+    success: false,
+    message: "",
+    busId: null,
+    seatsCreated: false,
+  });
   const {
     register,
     control,
@@ -35,34 +43,91 @@ const BusForm = () => {
     name: "amenities",
   });
 
-  const onSubmit = async (data) => {
-    const formattedData = {
-      ...data,
-      capacity: parseInt(data.capacity, 10),
-      routeId: parseInt(data.routeId, 10),
-    };
+  const createSeats = async (busId) => {
+    try {
+      const seatsResponse = await seatApi.post(
+        "/",
+        {
+          busId: busId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    console.log(formattedData);
+      setSubmitStatus((prev) => ({
+        ...prev,
+        seatsCreated: true,
+        message: seatsResponse.data.message || "Seats created successfully",
+      }));
+
+      return seatsResponse.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to create seats"
+      );
+    }
+  };
+
+  const onSubmit = async (data) => {
     if (!token) {
       throw new Error("Authentication token not found");
     }
+
     try {
-      await busApi.post("/", formattedData, {
+      setError(null);
+      const formattedData = {
+        ...data,
+        capacity: parseInt(data.capacity, 10),
+        routeId: parseInt(data.routeId, 10),
+      };
+
+      const busResponse = await busApi.post("/", formattedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error:",
-          error.response.data.message || error.response.data
-        );
+
+      if (
+        busResponse.data &&
+        busResponse.data.data &&
+        busResponse.data.data.id
+      ) {
+        setSubmitStatus({
+          success: true,
+          message: "Bus created successfully",
+          busId: busResponse.data.data.id,
+          seatsCreated: false,
+        });
+
+        try {
+          await createSeats(busResponse.data.data.id);
+          reset();
+        } catch (seatError) {
+          setError(
+            `Bus created but seat creation failed: ${seatError.message}`
+          );
+        }
       } else {
-        console.error("Error:", error.message);
+        throw new Error("Bus creation response did not include bus ID");
       }
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "An error occurred during bus creation"
+      );
+      setSubmitStatus({
+        success: false,
+        message: "",
+        busId: null,
+        seatsCreated: false,
+      });
     }
   };
+
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);

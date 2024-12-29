@@ -111,7 +111,8 @@ const BookingSuccessfullPage = () => {
             Booking Successful!
           </h1>
           <p className="text-gray-600 mt-2">
-            Your booking has been confirmed. Below are your booking details.
+            Your booking has been confirmed. Click <q>Return to Home button</q>{" "}
+            and Below is your booking details.
           </p>
         </div>
 

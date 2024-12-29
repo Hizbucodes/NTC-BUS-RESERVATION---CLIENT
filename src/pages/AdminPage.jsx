@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { FaBars, FaBus, FaRoute, FaTimes } from "react-icons/fa";
-import { MdCreateNewFolder } from "react-icons/md";
+import { GrUpdate } from "react-icons/gr";
+import { IoAddCircleSharp } from "react-icons/io5";
+import { MdCreateNewFolder, MdDelete } from "react-icons/md";
 import { TbReservedLine } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import BusForm from "../components/BusForm";
 import BusRouteForm from "../components/BusRouteForm";
+import BusRouteFormUpdate from "../components/BusRouteFormUpdate";
 import TripForm from "../components/TripForm";
 import ViewAllBooking from "../components/ViewAllBooking";
+import BusFormUpdate from "../components/BusFormUpdate";
+import TripFormUpdate from "../components/TripFormUpdate";
 
 const AdminPage = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -14,26 +19,66 @@ const AdminPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeContent, setActiveContent] = useState("createBusRoute");
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const [openDropdowns, setOpenDropdowns] = useState({});
+
+  const toggleDropdown = (itemId) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
   };
 
   const navItems = [
     {
-      id: "createBusRoute",
-      label: "Create Bus Route",
+      id: "Manage Bus Route",
+      label: "Manage Bus Route",
       icon: <FaRoute className="w-5 h-5" />,
+      children: [
+        {
+          id: "Create Bus Route",
+          label: "Create Bus Route",
+          icon: <IoAddCircleSharp className="w-4 h-4" />,
+        },
+        {
+          id: "Update Bus Route",
+          label: "Update Bus Route",
+          icon: <GrUpdate className="w-4 h-4" />,
+        },
+      ],
     },
     {
-      id: "createBus",
-      label: "Create Bus",
+      id: "Manage Bus",
+      label: "Manage Bus",
       icon: <FaBus className="w-5 h-5" />,
+      children: [
+        {
+          id: "Create Bus",
+          label: "Create Bus",
+          icon: <IoAddCircleSharp className="w-4 h-4" />,
+        },
+        {
+          id: "Update Bus",
+          label: "Update Bus",
+          icon: <GrUpdate className="w-4 h-4" />,
+        },
+      ],
     },
-
     {
-      id: "createTrip",
-      label: "Create Trip Schedule",
+      id: "Manage Trip Schedule",
+      label: "Manage Trip Schedule",
       icon: <MdCreateNewFolder className="w-5 h-5" />,
+      children: [
+        {
+          id: "Create Trip Schedule",
+          label: "Create Trip Schedule",
+          icon: <IoAddCircleSharp className="w-4 h-4" />,
+        },
+        {
+          id: "Update Trip Schedule",
+          label: "Update Trip Schedule",
+          icon: <GrUpdate className="w-4 h-4" />,
+        },
+      ],
     },
     {
       id: "viewAllBooking",
@@ -42,40 +87,143 @@ const AdminPage = () => {
     },
   ];
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   const renderContent = () => {
     switch (activeContent) {
-      case "createBusRoute":
+      case "Create Bus Route":
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Bus Route</h2>
             <BusRouteForm />
           </div>
         );
-      case "createBus":
+      case "Update Bus Route":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Update Bus Route</h2>
+
+            <BusRouteFormUpdate />
+          </div>
+        );
+
+      case "Create Bus":
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Bus</h2>
             <BusForm />
           </div>
         );
-      case "createTrip":
+      case "Update Bus":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Update Bus</h2>
+            <BusFormUpdate />
+          </div>
+        );
+
+      case "Create Trip Schedule":
         return (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Create Trip Schedule</h2>
             <TripForm />
           </div>
         );
+      case "Update Trip Schedule":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Update Trip Schedule</h2>
+            <TripFormUpdate />
+          </div>
+        );
+
       case "viewAllBooking":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">All Booking</h2>
+            <h2 className="text-2xl font-bold mb-4">All Bookings</h2>
             <ViewAllBooking />
           </div>
         );
 
       default:
-        return null;
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">
+              Welcome to NTC Admin Dashboard
+            </h2>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p>Select an option from the sidebar to get started</p>
+            </div>
+          </div>
+        );
     }
+  };
+
+  const NavItem = ({ item }) => {
+    const hasChildren = item.children && item.children.length > 0;
+    const isOpen = openDropdowns[item.id];
+
+    return (
+      <div className="w-full">
+        <button
+          onClick={() => {
+            if (hasChildren) {
+              toggleDropdown(item.id);
+            } else {
+              setActiveContent(item.id);
+            }
+          }}
+          className={`
+            w-full flex items-center justify-between px-6 py-3 text-left
+            hover:bg-gray-700 transition-colors duration-200
+            ${activeContent === item.id ? "bg-gray-700" : ""}
+          `}
+        >
+          <div className="flex items-center">
+            <span className="mr-3">{item.icon}</span>
+            {item.label}
+          </div>
+          {hasChildren && (
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          )}
+        </button>
+
+        {hasChildren && isOpen && (
+          <div className="bg-gray-900 overflow-hidden transition-all duration-200">
+            {item.children.map((child) => (
+              <button
+                key={child.id}
+                onClick={() => setActiveContent(child.id)}
+                className={`
+                  w-full flex items-center px-8 py-2 text-left text-sm
+                  hover:bg-gray-700 transition-colors duration-200
+                  ${activeContent === child.id ? "bg-gray-700" : ""}
+                `}
+              >
+                <span className="mr-3">{child.icon}</span>
+                {child.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -93,18 +241,7 @@ const AdminPage = () => {
 
         <nav className="mt-6">
           {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveContent(item.id)}
-              className={`
-                w-full flex items-center px-6 py-3 text-left
-                hover:bg-gray-700 transition-colors duration-200
-                ${activeContent === item.id ? "bg-gray-700" : ""}
-              `}
-            >
-              <span className="mr-3">{item.icon}</span>
-              {item.label}
-            </button>
+            <NavItem key={item.id} item={item} />
           ))}
         </nav>
       </div>
@@ -139,5 +276,4 @@ const AdminPage = () => {
     </div>
   );
 };
-
 export default AdminPage;

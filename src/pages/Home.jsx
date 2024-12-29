@@ -20,7 +20,6 @@ const Home = () => {
       <div className="bg-white w-[94%] rounded-md mx-auto min-h-52 pt-5 px-12">
         <h4 className="text-3xl">Find your bus & travel</h4>
 
-        {/* Form */}
         <Form />
       </div>
     </section>

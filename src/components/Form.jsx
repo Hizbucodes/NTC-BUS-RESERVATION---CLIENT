@@ -1,18 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CiCalendarDate } from "react-icons/ci";
 import { GiBus } from "react-icons/gi";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import routeApi from "../api/routeApi";
 
 const Form = () => {
-  const initialLocations = [
-    { id: 1, name: "Kandy" },
-    { id: 2, name: "Colombo" },
-    { id: 3, name: "Anuradhapura" },
-    { id: 4, name: "Matale" },
-  ];
+  const [busRoutes, setBusRoutes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBusRoutes = async () => {
+      try {
+        setLoading(true);
+        const response = await routeApi.get("/getAllRoutes");
+        const data = response.data;
+        setBusRoutes(data.data);
+      } catch (err) {
+        console.log("Error while getting busRoutes: ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBusRoutes();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -47,11 +61,17 @@ const Form = () => {
           id="from"
           className="bg-zinc-100 rounded-md p-2 font-semibold w-full"
         >
-          {initialLocations.map((Origin) => (
-            <option value={Origin.name} key={Origin.id}>
-              {Origin.name}
+          {loading ? (
+            <option value="" disabled>
+              Loading Bus Routes...
             </option>
-          ))}
+          ) : (
+            busRoutes.map((Origin) => (
+              <option value={Origin.origin} key={Origin.id}>
+                {Origin.origin}
+              </option>
+            ))
+          )}
         </select>
         {errors.origin && (
           <p className="text-red-500 font-semibold">{errors.origin.message}</p>
@@ -68,11 +88,17 @@ const Form = () => {
           id="to"
           className="bg-zinc-100 rounded-md p-2 font-semibold w-full"
         >
-          {initialLocations.map((destination) => (
-            <option value={destination.name} key={destination.id}>
-              {destination.name}
+          {loading ? (
+            <option value="" disabled>
+              Loading routes...
             </option>
-          ))}
+          ) : (
+            busRoutes.map((Destination) => (
+              <option value={Destination.destination} key={Destination.id}>
+                {Destination.destination}
+              </option>
+            ))
+          )}
         </select>
         {errors.destination && (
           <p className="text-red-500 font-semibold">

@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { FaBars, FaBus, FaRoute, FaTimes } from "react-icons/fa";
+import { FaBars, FaBus, FaRoute, FaTimes, FaTrash } from "react-icons/fa";
 import { GrUpdate } from "react-icons/gr";
 import { IoAddCircleSharp } from "react-icons/io5";
-import { MdCreateNewFolder, MdDelete } from "react-icons/md";
+import { MdCreateNewFolder } from "react-icons/md";
 import { TbReservedLine } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import BusForm from "../components/BusForm";
+import BusFormUpdate from "../components/BusFormUpdate";
 import BusRouteForm from "../components/BusRouteForm";
 import BusRouteFormUpdate from "../components/BusRouteFormUpdate";
+import CancelTripSchedule from "../components/CancelTripSchedule";
 import TripForm from "../components/TripForm";
-import ViewAllBooking from "../components/ViewAllBooking";
-import BusFormUpdate from "../components/BusFormUpdate";
 import TripFormUpdate from "../components/TripFormUpdate";
+import ViewAllBooking from "../components/ViewAllBooking";
 
 const AdminPage = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -78,6 +79,11 @@ const AdminPage = () => {
           label: "Update Trip Schedule",
           icon: <GrUpdate className="w-4 h-4" />,
         },
+        {
+          id: "Cancel Trip Schedule",
+          label: "Cancel Trip Schedule",
+          icon: <FaTrash className="w-4 h-4" />,
+        },
       ],
     },
     {
@@ -136,6 +142,13 @@ const AdminPage = () => {
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Update Trip Schedule</h2>
             <TripFormUpdate />
+          </div>
+        );
+      case "Cancel Trip Schedule":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Cancel Trip Schedule</h2>
+            <CancelTripSchedule />
           </div>
         );
 

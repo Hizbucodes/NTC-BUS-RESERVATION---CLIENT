@@ -17,6 +17,9 @@ import { verifyToken } from "./app/feature/auth/authSlice";
 import BusPage from "./pages/BusPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
+import SeatLayoutPage from "./pages/SeatLayoutPage";
+import BookingPage from "./pages/BookingPage";
+import BookingSuccessfullPage from "./pages/BookingSuccessfullPage";
 
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -36,6 +39,31 @@ function App() {
           }
         />
         <Route path="trips" element={<TripSchedulePage />} />
+
+        <Route
+          path="seat-layout/:busId"
+          element={
+            <ProtectedRoute requiredRole="commuter">
+              <SeatLayoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="booking/details"
+          element={
+            <ProtectedRoute requiredRole="commuter">
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booking-success"
+          element={
+            <ProtectedRoute requiredRole="commuter">
+              <BookingSuccessfullPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route

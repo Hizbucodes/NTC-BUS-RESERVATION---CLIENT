@@ -61,7 +61,7 @@ const TripSchedulePage = () => {
 
   return (
     <div className="p-6 flex flex-col items-center justify-center gap-y-8">
-      <h1 className="text-4xl font-bold mb-4">{!error && "Trip Results"}</h1>
+      <h1 className="text-4xl font-bold mb-4">{!error && "Trip Schedule"}</h1>
       {loading && <p>Loading...</p>}
       {error && (
         <>

@@ -1,6 +1,17 @@
 import { BsArrowRight } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const TripCard = ({ trip }) => {
+  const navigate = useNavigate();
+
+  const handleReserveSeat = () => {
+    navigate(`/seat-layout/${trip.Bus.id}`, {
+      state: {
+        tripId: trip.id,
+      },
+    });
+  };
+
   return (
     <li
       key={trip.id}
@@ -15,6 +26,7 @@ const TripCard = ({ trip }) => {
         <button
           type="button"
           className="bg-black text-white rounded-md md:w-40 w-36 py-2 font-bold hover:opacity-80 duration-200 ease-in-out transition-opacity shadow-lg shadow-black/50"
+          onClick={handleReserveSeat}
         >
           Reserve Seat
         </button>
@@ -47,6 +59,25 @@ const TripCard = ({ trip }) => {
           Duration:{" "}
           <span className="font-semibold">{trip.Route.duration} hours</span>
         </p>
+        <p>
+          Bus Type: <span className="font-semibold">{trip.Bus.busType}</span>
+        </p>
+
+        <ul className="">
+          Bus Amenities:
+          {trip.Bus.amenities.length > 0 ? (
+            trip.Bus.amenities.map((amenity, index) => (
+              <li
+                key={index}
+                className="bg-black/80 shadow-2xl text-white rounded-full px-1.5 py-0.1 inline-block m-1 text-[0.8rem] font-semibold "
+              >
+                {amenity}
+              </li>
+            ))
+          ) : (
+            <li>No amenities available</li>
+          )}
+        </ul>
       </div>
     </li>
   );

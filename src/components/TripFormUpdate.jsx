@@ -33,7 +33,7 @@ const TripFormUpdate = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data.data);
+
         setTrips(response.data.data);
       } catch (error) {
         console.error("Error fetching trips:", error);

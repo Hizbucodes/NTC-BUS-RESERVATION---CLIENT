@@ -13,11 +13,6 @@ const MobileNavBar = () => {
       navTitle: "Buses",
       linkTo: "/buses",
     },
-    {
-      id: 3,
-      navTitle: "Routes",
-      linkTo: "/routes",
-    },
   ]);
   return (
     <nav>

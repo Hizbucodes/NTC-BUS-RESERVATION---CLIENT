@@ -15,7 +15,7 @@ const ViewAllBooking = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setBookings(response.data.data);
+        setBookings(response.data.data || []);
       } catch (err) {
         setError("Failed to fetch bookings");
         console.error(err);

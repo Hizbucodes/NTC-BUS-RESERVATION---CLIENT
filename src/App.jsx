@@ -20,6 +20,7 @@ import AdminPage from "./pages/AdminPage";
 import SeatLayoutPage from "./pages/SeatLayoutPage";
 import BookingPage from "./pages/BookingPage";
 import BookingSuccessfullPage from "./pages/BookingSuccessfullPage";
+import OperatorPage from "./pages/OperatorPage";
 
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -35,7 +36,13 @@ function App() {
         <Route
           index
           element={
-            user?.role === "admin" ? <Navigate to="/admin" replace /> : <Home />
+            user?.role === "admin" ? (
+              <Navigate to="/admin" replace />
+            ) : user?.role === "operator" ? (
+              <Navigate to="/operator" replace />
+            ) : (
+              <Home />
+            )
           }
         />
         <Route path="trips" element={<TripSchedulePage />} />
@@ -79,6 +86,15 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/operator"
+          element={
+            <ProtectedRoute requiredRole="operator">
+              <OperatorPage />
             </ProtectedRoute>
           }
         />
